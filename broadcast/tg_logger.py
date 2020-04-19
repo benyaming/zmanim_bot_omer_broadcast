@@ -32,7 +32,6 @@ def _get_exception_line_context(tb: TracebackType, line_offset: int = 4) -> str:
 class TgFormatter(logging.Formatter):
     def formatException(self, ei):
         msg = super().formatException(ei)
-        msg = escape(msg)
 
         # add few code lines
         code_lines = _get_exception_line_context(ei[2])
@@ -50,6 +49,9 @@ class TgHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        bot.send_message(LOG_ID, msg, parse_mode='HTML')
-
+        msg = escape(msg)
+        try:
+            bot.send_message(LOG_ID, msg, parse_mode='HTML')
+        except Exception as e:
+            logging.exception(e)
 

@@ -8,7 +8,6 @@ from timezonefinder import TimezoneFinder
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
-from telegram.error import Unauthorized
 
 from .config import DSN
 from .helpers import UserData, get_user_data, set_user_time, notificate_user, reset_sent_status
