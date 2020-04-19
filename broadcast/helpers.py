@@ -55,7 +55,7 @@ def reset_sent_status(conn):
 def compose_msg(lang: str) -> str:
     jcalendar = JewishCalendar.from_date(date.today()).forward(1)
     omer_day = jcalendar.day_of_omer()
-    if not omer_day or omer_day == 49:
+    if not omer_day:
         return ''
 
     msg = MESSAGES[lang]
