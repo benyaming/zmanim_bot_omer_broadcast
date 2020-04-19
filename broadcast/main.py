@@ -6,6 +6,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
 from broadcast.tg_logger import TgHandler
+from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
 
 
@@ -31,13 +32,15 @@ def safe_check():
 
 scheduler = BackgroundScheduler()
 daily_trigger = CronTrigger(day='*', hour=0, minute=1)
-trigger = IntervalTrigger(minutes=1)
+trigger = IntervalTrigger(minutes=JOB_PERIOD)
 
 scheduler.add_job(safe_set_time, trigger=daily_trigger)
 scheduler.add_job(safe_check, trigger=trigger)
 
 
 if __name__ == '__main__':
+    safe_set_time()
+
     scheduler.start()
     logger.info('Starting scheduler...')
 

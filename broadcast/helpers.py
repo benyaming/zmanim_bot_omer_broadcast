@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
-from .config import BOT_TOKEN, MESSAGES
+from .config import DB_USER_TABLE, MESSAGES
 
 
 @dataclass
@@ -21,10 +21,10 @@ class UserData:
 
 def get_user_data(conn) -> List[UserData]:
     cur = conn.cursor()
-    cur.execute('select o.user_id, l.latitude, l.longitude, la.lang, o.sent_today, o.dt '
-                'from omer_subscriptions o '
-                'join locations l on o.user_id = l.user_id '
-                'join lang la on l.user_id = la.user_id')
+    cur.execute(f'select o.user_id, l.latitude, l.longitude, la.lang, o.sent_today, o.dt '
+                f'from {DB_USER_TABLE} o '
+                f'join locations l on o.user_id = l.user_id '
+                f'join lang la on l.user_id = la.user_id')
 
     fetched = []
 
@@ -36,22 +36,22 @@ def get_user_data(conn) -> List[UserData]:
 
 def set_user_time(conn, user_id: int, dt: str):
     cur = conn.cursor()
-    cur.execute('update omer_subscriptions '
-                'set dt = %s where user_id = %s', (dt, user_id))
+    cur.execute(f'update {DB_USER_TABLE} '
+                f'set dt = %s where user_id = %s', (dt, user_id))
     conn.commit()
 
 
 def set_user_sent_status(conn, user_id: int):
     cur = conn.cursor()
-    cur.execute('update omer_subscriptions '
-                'set sent_today = TRUE where user_id = %s', (user_id,))
+    cur.execute(f'update {DB_USER_TABLE} '
+                f'set sent_today = TRUE where user_id = %s', (user_id,))
     conn.commit()
 
 
 def reset_sent_status(conn):
     cur = conn.cursor()
-    cur.execute('update omer_subscriptions '
-                'set sent_today = FALSE where TRUE')
+    cur.execute(f'update {DB_USER_TABLE} '
+                f'set sent_today = FALSE where TRUE')
     conn.commit()
 
 
