@@ -16,9 +16,9 @@ logger.addHandler(TgHandler(logging.WARNING))
 logger.addHandler(logging.StreamHandler())
 
 
-def safe_set_time():
+def safe_set_time(reset_status: bool = True):
     try:
-        set_time_for_today()
+        set_time_for_today(reset_status)
     except Exception as e:
         logging.exception(e)
 
@@ -39,7 +39,7 @@ scheduler.add_job(safe_check, trigger=trigger)
 
 
 if __name__ == '__main__':
-    safe_set_time()
+    safe_set_time(reset_status=False)
 
     scheduler.start()
     logger.info('Starting scheduler...')

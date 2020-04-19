@@ -8,6 +8,7 @@ from timezonefinder import TimezoneFinder
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
+from telegram.error import Unauthorized
 
 from .config import DSN
 from .helpers import UserData, get_user_data, set_user_time, notificate_user, reset_sent_status
@@ -34,10 +35,11 @@ def get_omer_time(user_data: UserData) -> Optional[dt]:
     return omer_time
 
 
-def set_time_for_today():
+def set_time_for_today(reset_status: bool):
     logger.info('Setting timings for today')
     with connect(DSN) as conn:
-        reset_sent_status(conn)
+        if reset_status:
+            reset_sent_status(conn)
         user_data = get_user_data(conn)
 
         for user in user_data:
@@ -58,6 +60,8 @@ def check_time():
             now = dt.now(tz)
 
             if dt.fromisoformat(user.dt) < now and not user.sent:
-                notificate_user(conn, user)
-
+                try:
+                    notificate_user(conn, user)
+                except Exception as e:
+                    logger.exception(e)
 
