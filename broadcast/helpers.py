@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
-from .config import DB_USER_TABLE, MESSAGES
+from .config import GET_USERS_QUERY, MESSAGES, DB_USER_TABLE
 
 
 @dataclass
@@ -21,10 +21,7 @@ class UserData:
 
 def get_user_data(conn) -> List[UserData]:
     cur = conn.cursor()
-    cur.execute(f'select o.user_id, l.latitude, l.longitude, la.lang, o.sent_today, o.dt '
-                f'from {DB_USER_TABLE} o '
-                f'join locations l on o.user_id = l.user_id '
-                f'join lang la on l.user_id = la.user_id')
+    cur.execute(GET_USERS_QUERY)
 
     fetched = []
 

@@ -3,7 +3,9 @@ from os import getenv
 BOT_TOKEN = getenv('BOT_TOKEN')
 LOG_ID = getenv('LOG_ID')
 
+GET_USERS_QUERY = getenv('GET_USERS_QUERY')
 DB_USER_TABLE = getenv('DB_USER_TABLE')
+
 JOB_PERIOD = int(getenv('JOB_PERIOD', 3))
 
 DSN = f'dbname={getenv("DB_NAME")} ' \
