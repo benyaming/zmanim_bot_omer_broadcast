@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 from typing import List
 from datetime import date
@@ -8,6 +9,8 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from .misc import bot
 from .config import GET_USERS_QUERY, MESSAGES, DB_USER_TABLE
 
+
+logger = logging.getLogger('omer_broadcast')
 
 @dataclass
 class UserData:
@@ -76,7 +79,12 @@ def compose_msg(lang: str) -> str:
 
 def notificate_user(conn, user: UserData):
     msg = compose_msg(user.lang)
-    bot.send_message(user.user_id, msg, parse_mode='HTML')
+
+    try:
+        bot.send_message(user.user_id, msg, parse_mode='HTML')
+    except Exception as e:
+        logger.warning(f'Failed to send message "{msg}" to user {user.user_id}')
+        logger.exception(e)
     set_user_sent_status(conn, user.user_id)
     sleep(.05)
 
