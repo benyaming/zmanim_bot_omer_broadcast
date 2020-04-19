@@ -26,7 +26,7 @@ def get_user_data(conn) -> List[UserData]:
     fetched = []
 
     for row in cur.fetchall():
-        fetched.append(UserData(*row))
+        fetched.append(UserData(row[0], float(row[1]), float(row[2]), row[3], row[4], row[5]))
 
     return fetched
 
