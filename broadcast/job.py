@@ -1,4 +1,3 @@
-import logging
 from typing import Optional
 from datetime import date, datetime as dt
 
@@ -10,10 +9,8 @@ from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .config import DSN
+from .tg_logger import logger
 from .helpers import UserData, get_user_data, set_user_time, notificate_user, reset_sent_status
-
-
-logger = logging.getLogger('omer_broadcast')
 
 
 def get_omer_time(user_data: UserData) -> Optional[dt]:

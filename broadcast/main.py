@@ -5,15 +5,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
-from broadcast.tg_logger import TgHandler
+from broadcast.tg_logger import logger
 from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
-
-
-logger = logging.getLogger('omer_broadcast')
-logger.setLevel(logging.INFO)
-logger.addHandler(TgHandler(logging.WARNING))
-logger.addHandler(logging.StreamHandler())
 
 
 def safe_set_time(reset_status: bool = True):

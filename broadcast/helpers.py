@@ -1,4 +1,3 @@
-import logging
 from time import sleep
 from typing import List
 from datetime import date
@@ -7,10 +6,9 @@ from dataclasses import dataclass
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
+from .tg_logger import logger
 from .config import GET_USERS_QUERY, MESSAGES, DB_USER_TABLE
 
-
-logger = logging.getLogger('omer_broadcast')
 
 @dataclass
 class UserData:

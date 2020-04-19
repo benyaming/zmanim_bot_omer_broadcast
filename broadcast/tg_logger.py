@@ -1,7 +1,5 @@
 import logging
 import linecache
-import traceback
-import sys
 from types import TracebackType
 from html import escape
 
@@ -30,11 +28,15 @@ def _get_exception_line_context(tb: TracebackType, line_offset: int = 4) -> str:
 
 
 class TgFormatter(logging.Formatter):
+    # def format(self, record):
+    #     s = super().format(record)
+    #
+
     def formatException(self, ei):
-        msg = super().formatException(ei)
+        msg = escape(super().formatException(ei))
 
         # add few code lines
-        code_lines = _get_exception_line_context(ei[2])
+        code_lines = escape(_get_exception_line_context(ei[2]))
         sep = '==========================='
         resp = f'<code>{msg}\n\n{sep}\n\n{code_lines}</code>'
         return resp
@@ -49,9 +51,13 @@ class TgHandler(logging.Handler):
 
     def emit(self, record):
         msg = self.format(record)
-        msg = escape(msg)
         try:
             bot.send_message(LOG_ID, msg, parse_mode='HTML')
         except Exception as e:
             logging.exception(e)
 
+
+logger = logging.getLogger('omer_broadcast')
+logger.setLevel(logging.INFO)
+logger.addHandler(TgHandler(logging.WARNING))
+logger.addHandler(logging.StreamHandler())
