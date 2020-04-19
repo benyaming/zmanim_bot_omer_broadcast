@@ -1,6 +1,6 @@
 from time import sleep
 from typing import List
-from datetime import datetime, date
+from datetime import date
 from dataclasses import dataclass
 
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
@@ -53,9 +53,9 @@ def reset_sent_status(conn):
 
 
 def compose_msg(lang: str) -> str:
-    jcalendar = JewishCalendar.from_date(date.today())
+    jcalendar = JewishCalendar.from_date(date.today()).forward(1)
     omer_day = jcalendar.day_of_omer()
-    if not omer_day:
+    if not omer_day or omer_day == 49:
         return ''
 
     msg = MESSAGES[lang]
