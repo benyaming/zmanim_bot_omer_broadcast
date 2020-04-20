@@ -1,7 +1,7 @@
 import logging
 from time import sleep
 
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
@@ -24,8 +24,8 @@ def safe_check():
         logging.exception(e)
 
 
-scheduler = BackgroundScheduler()
-daily_trigger = CronTrigger(day='*', hour=0, minute=1)
+scheduler = BlockingScheduler()
+daily_trigger = CronTrigger(day='*', hour=11, minute=12)
 trigger = IntervalTrigger(minutes=JOB_PERIOD)
 
 scheduler.add_job(safe_set_time, trigger=daily_trigger)
@@ -35,12 +35,7 @@ scheduler.add_job(safe_check, trigger=trigger)
 if __name__ == '__main__':
     safe_set_time(reset_status=False)
 
-    scheduler.start()
     logger.info('Starting scheduler...')
+    scheduler.start()
 
-    try:
-        while True:
-            sleep(10)
-    except (KeyboardInterrupt, SystemExit):
-        scheduler.shutdown()
 
