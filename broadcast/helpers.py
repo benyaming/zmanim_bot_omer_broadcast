@@ -1,13 +1,21 @@
 from time import sleep
-from typing import List
 from datetime import date
+from typing import List, Tuple
 from dataclasses import dataclass
 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
 from .tg_logger import logger
-from .config import GET_USERS_QUERY, MESSAGES, DB_USER_TABLE
+from .config import (
+    GET_USERS_QUERY,
+    MESSAGES,
+    BUTTONS,
+    DB_USER_TABLE,
+    CHANNEL_POST_OFFSET,
+    LINK_TO_POST
+)
 
 
 @dataclass
@@ -53,13 +61,14 @@ def reset_sent_status(conn):
     conn.commit()
 
 
-def compose_msg(lang: str) -> str:
+def compose_msg(lang: str) -> Tuple[str, InlineKeyboardMarkup]:
     jcalendar = JewishCalendar.from_date(date.today()).forward(1)
     omer_day = jcalendar.day_of_omer()
     if not omer_day:
-        return ''
+        raise ValueError('No omer day!')
 
     msg = MESSAGES[lang]
+    post_id = CHANNEL_POST_OFFSET + omer_day
 
     if lang == 'English':
         if omer_day % 10 == 1:
@@ -72,20 +81,20 @@ def compose_msg(lang: str) -> str:
             omer_day = f'{omer_day}th'
 
     msg = msg.format(f'<b>{omer_day}</b>')
-    return msg
+
+    btn = InlineKeyboardButton(text=BUTTONS[lang], url=LINK_TO_POST.format(post_id))
+    kb = InlineKeyboardMarkup([[btn]])
+
+    return msg, kb
 
 
 def notificate_user(conn, user: UserData):
-    msg = compose_msg(user.lang)
+    msg, kb = compose_msg(user.lang)
 
     try:
-        bot.send_message(user.user_id, msg, parse_mode='HTML')
+        bot.send_message(user.user_id, msg, parse_mode='HTML', reply_markup=kb)
     except Exception as e:
         logger.warning(f'Failed to send message "{msg}" to user {user.user_id}')
         logger.exception(e)
     set_user_sent_status(conn, user.user_id)
     sleep(.05)
-
-
-
-

@@ -19,3 +19,11 @@ MESSAGES = {
       'Russian': getenv('MSG_RU'),
       'English': getenv('MSG_EN')
 }
+
+BUTTONS = {
+      'Russian': getenv('BUTTON_RU'),
+      'English': getenv('BUTTON_EN')
+}
+
+CHANNEL_POST_OFFSET = int(getenv('CHANNEL_INIT_POST'))
+LINK_TO_POST = getenv('LINK_TO_POST')
