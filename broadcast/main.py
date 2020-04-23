@@ -9,6 +9,8 @@ from broadcast.tg_logger import logger
 from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
 
+logging.basicConfig(level=logging.DEBUG)
+
 
 def safe_set_time(reset_status: bool = True):
     try:
@@ -25,7 +27,7 @@ def safe_check():
 
 
 scheduler = BlockingScheduler()
-daily_trigger = CronTrigger(day='*', hour=11, minute=12)
+daily_trigger = CronTrigger(day='*', hour=0, minute=1)
 trigger = IntervalTrigger(minutes=JOB_PERIOD)
 
 scheduler.add_job(safe_set_time, trigger=daily_trigger)
