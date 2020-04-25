@@ -34,8 +34,6 @@ def get_omer_time(user_data: UserData) -> Optional[dt]:
 def set_time_for_today(reset_status: bool):
     logger.info(f'Setting timings for today, reset={reset_status}')
     with connect(DSN) as conn:
-        if reset_status:
-            reset_sent_status(conn)
         user_data = get_user_data(conn)
 
         for user in user_data:
@@ -44,6 +42,9 @@ def set_time_for_today(reset_status: bool):
                 continue
 
             set_user_time(conn, user.user_id, omer_time.isoformat())
+
+        if reset_status:
+            reset_sent_status(conn)
 
 
 def check_time():
