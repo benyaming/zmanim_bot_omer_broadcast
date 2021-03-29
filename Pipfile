@@ -6,12 +6,13 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-zmanim = {git = "https://github.com/pinnymz/python-zmanim.git"}
+zmanim = "*"
 timezonefinder = "*"
 apscheduler = "*"
 python-telegram-bot = "*"
 pytz = "*"
-psycopg2 = "*"
+#psycopg2 = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.7"

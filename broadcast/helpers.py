@@ -3,19 +3,12 @@ from datetime import date
 from typing import List, Tuple
 from dataclasses import dataclass
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from pymongo.collection import Collection
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
 from .tg_logger import logger
-from .config import (
-    GET_USERS_QUERY,
-    MESSAGES,
-    BUTTONS,
-    DB_USER_TABLE,
-    CHANNEL_POST_OFFSET,
-    LINK_TO_POST
-)
+from .config import MESSAGES
 
 
 @dataclass
@@ -28,49 +21,63 @@ class UserData:
     dt: str = None
 
 
-def get_user_data(conn) -> List[UserData]:
-    cur = conn.cursor()
-    cur.execute(GET_USERS_QUERY)
+def get_location_from_list(location_list: List[dict]) -> Tuple[float, float]:
+    loc = list(filter(lambda l: l['is_active'], location_list))
+    if not loc:
+        return 55.72, 37.64
+    return loc[0]['lat'], loc[0]['lng']
 
+
+def get_user_data(collection: Collection) -> List[UserData]:
+    """ Get all users that should receive omer notifications """
     fetched = []
+    documents = collection.find({'omer.is_enabled': True})
 
-    for row in cur.fetchall():
-        fetched.append(UserData(row[0], float(row[1]), float(row[2]), row[3], row[4], row[5]))
+    for doc in documents:
+        lat, lng = get_location_from_list(doc['location_list'])
+        user = UserData(
+            user_id=doc['user_id'],
+            latitude=lat,
+            longitude=lng,
+            lang=doc['language'],
+            sent=bool(doc['omer']['is_sent_today']),
+            dt=doc['omer']['notification_time']
+        )
+        fetched.append(user)
 
     return fetched
 
 
-def set_user_time(conn, user_id: int, dt: str):
-    cur = conn.cursor()
-    cur.execute(f'update {DB_USER_TABLE} '
-                f'set dt = %s where user_id = %s', (dt, user_id))
-    conn.commit()
+def set_notification_time_for_user(collection: Collection, user_id: int, notification_time: str):
+    collection.update_one(
+        filter={'user_id': user_id},
+        update={'$set': {'omer.notification_time': notification_time}}
+    )
 
 
-def set_user_sent_status(conn, user_id: int):
-    cur = conn.cursor()
-    cur.execute(f'update {DB_USER_TABLE} '
-                f'set sent_today = TRUE where user_id = %s', (user_id,))
-    conn.commit()
+def set_user_sent_status(collection: Collection, user_id: int):
+    collection.update_one(
+        filter={'user_id': user_id},
+        update={'$set': {'omer.is_sent_today': True}}
+    )
 
 
-def reset_sent_status(conn):
-    cur = conn.cursor()
-    cur.execute(f'update {DB_USER_TABLE} '
-                f'set sent_today = FALSE where TRUE')
-    conn.commit()
+def reset_sent_status(collection: Collection):
+    collection.update_many(
+        filter={'omer.is_enabled': True},
+        update={'$set': {'omer.is_sent_today': False}}
+    )
 
 
-def compose_msg(lang: str) -> Tuple[str, InlineKeyboardMarkup]:
+def compose_msg(lang: str) -> str:
     jcalendar = JewishCalendar.from_date(date.today()).forward(1)
     omer_day = jcalendar.day_of_omer()
     if not omer_day:
         raise ValueError('No omer day!')
 
     msg = MESSAGES[lang]
-    post_id = CHANNEL_POST_OFFSET + omer_day
 
-    if lang == 'English':
+    if lang == 'en':
         if omer_day % 10 == 1:
             omer_day = f'{omer_day}st'
         elif omer_day % 10 == 2:
@@ -82,19 +89,16 @@ def compose_msg(lang: str) -> Tuple[str, InlineKeyboardMarkup]:
 
     msg = msg.format(f'<b>{omer_day}</b>')
 
-    btn = InlineKeyboardButton(text=BUTTONS[lang], url=LINK_TO_POST.format(post_id))
-    kb = InlineKeyboardMarkup([[btn]])
-
-    return msg, kb
+    return msg
 
 
-def notificate_user(conn, user: UserData):
-    msg, kb = compose_msg(user.lang)
+def notificate_user(collection, user: UserData):
+    msg = compose_msg(user.lang)
 
     try:
-        bot.send_message(user.user_id, msg, parse_mode='HTML', reply_markup=kb)
+        bot.send_message(user.user_id, msg, parse_mode='HTML')
     except Exception as e:
         logger.warning(f'Failed to send message "{msg}" to user {user.user_id}')
         logger.exception(e)
-    set_user_sent_status(conn, user.user_id)
+    set_user_sent_status(collection, user.user_id)
     sleep(.05)
