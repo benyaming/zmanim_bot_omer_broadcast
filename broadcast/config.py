@@ -8,8 +8,3 @@ DB_NAME = getenv('DB_NAME', 'zmanim_bot')
 COLLECTION_NAME = getenv('COLLECTION_NAME', 'zmanim')
 
 JOB_PERIOD = int(getenv('JOB_PERIOD', 3))
-
-MESSAGES = {
-      'ru': getenv('MSG_RU'),
-      'en': getenv('MSG_EN')
-}

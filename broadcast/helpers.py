@@ -8,7 +8,7 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .misc import bot
 from .tg_logger import logger
-from .config import MESSAGES
+from . import texsts
 
 
 @dataclass
@@ -75,7 +75,10 @@ def compose_msg(lang: str) -> str:
     if not omer_day:
         raise ValueError('No omer day!')
 
-    msg = MESSAGES[lang]
+    if jcalendar.gregorian_date.weekday() != 4:
+        msg = texsts.MESSAGES[lang]
+    else:
+        msg = texsts.MESSAGES_FRIDAY[lang]
 
     if lang == 'en':
         if omer_day % 10 == 1:
@@ -86,10 +89,16 @@ def compose_msg(lang: str) -> str:
             omer_day = f'{omer_day}rd'
         else:
             omer_day = f'{omer_day}th'
+    elif lang == 'ru':
+        omer_day = f'{omer_day}-й'
 
     msg = msg.format(f'<b>{omer_day}</b>')
+    full_text = f'{msg}\n\n' \
+                f'<code>{texsts.blessing}\n\n' \
+                f'{texsts.omer_texts[jcalendar.day_of_omer()]}\n\n' \
+                f'{texsts.after_text}</code>'
 
-    return msg
+    return full_text
 
 
 def notificate_user(collection, user: UserData):
