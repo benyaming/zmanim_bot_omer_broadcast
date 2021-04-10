@@ -75,7 +75,7 @@ def compose_msg(lang: str) -> str:
     if not omer_day:
         raise ValueError('No omer day!')
 
-    if jcalendar.gregorian_date.weekday() != 4:
+    if jcalendar.gregorian_date.weekday() != 5:
         msg = texsts.MESSAGES[lang]
     else:
         msg = texsts.MESSAGES_FRIDAY[lang]
