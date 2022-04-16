@@ -28,9 +28,6 @@ def _get_exception_line_context(tb: TracebackType, line_offset: int = 4) -> str:
 
 
 class TgFormatter(logging.Formatter):
-    # def format(self, record):
-    #     s = super().format(record)
-    #
 
     def formatException(self, ei):
         msg = escape(super().formatException(ei))

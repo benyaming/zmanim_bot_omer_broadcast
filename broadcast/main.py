@@ -7,13 +7,15 @@ from apscheduler.triggers.interval import IntervalTrigger
 from broadcast.tg_logger import logger
 from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
+from broadcast.file_logger import init_logger
 
 logging.basicConfig(level=logging.DEBUG)
 
 
-def safe_set_time(reset_status: bool = True):
+def safe_set_time(should_reset: bool = True):
+    init_logger()
     try:
-        set_time_for_today(reset_status)
+        set_time_for_today(should_reset)
     except Exception as e:
         logging.exception(e)
 
@@ -34,7 +36,7 @@ scheduler.add_job(safe_check, trigger=trigger)
 
 
 if __name__ == '__main__':
-    safe_set_time(reset_status=False)
+    safe_set_time(should_reset=False)
 
     logger.info('Starting scheduler...')
     scheduler.start()

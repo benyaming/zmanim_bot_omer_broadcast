@@ -1,14 +1,15 @@
-from time import sleep
 from datetime import date
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 from dataclasses import dataclass
 
+from telegram import Message
 from pymongo.collection import Collection
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
+from . import texsts
 from .misc import bot
 from .tg_logger import logger
-from . import texsts
+from .file_logger import log_sent_message, log_sent_failure
 
 
 @dataclass
@@ -17,8 +18,7 @@ class UserData:
     latitude: float
     longitude: float
     lang: str
-    sent: bool = None
-    dt: str = None
+    dt: Optional[str] = None
 
 
 def get_location_from_list(location_list: List[dict]) -> Tuple[float, float]:
@@ -28,10 +28,15 @@ def get_location_from_list(location_list: List[dict]) -> Tuple[float, float]:
     return loc[0]['lat'], loc[0]['lng']
 
 
-def get_user_data(collection: Collection) -> List[UserData]:
+def get_user_data(collection: Collection, exclude_received: bool = True) -> List[UserData]:
     """ Get all users that should receive omer notifications """
     fetched = []
-    documents = collection.find({'omer.is_enabled': True})
+    filters = {'omer.is_enabled': True}
+    if exclude_received:
+        filters['omer.is_sent_today'] = False
+        filters['omer.notification_time'] = {'$ne': None}
+
+    documents = collection.find(filters)
 
     for doc in documents:
         lat, lng = get_location_from_list(doc['location_list'])
@@ -40,7 +45,6 @@ def get_user_data(collection: Collection) -> List[UserData]:
             latitude=lat,
             longitude=lng,
             lang=doc['language'],
-            sent=bool(doc['omer']['is_sent_today']),
             dt=doc['omer']['notification_time']
         )
         fetched.append(user)
@@ -48,7 +52,7 @@ def get_user_data(collection: Collection) -> List[UserData]:
     return fetched
 
 
-def set_notification_time_for_user(collection: Collection, user_id: int, notification_time: str):
+def set_notification_time_for_user(collection: Collection, user_id: int, notification_time: Optional[str]):
     collection.update_one(
         filter={'user_id': user_id},
         update={'$set': {'omer.notification_time': notification_time}}
@@ -105,9 +109,9 @@ def notificate_user(collection, user: UserData):
     msg = compose_msg(user.lang)
 
     try:
-        bot.send_message(user.user_id, msg, parse_mode='HTML')
+        sent_msg: Message = bot.send_message(user.user_id, msg, parse_mode='HTML')
+        log_sent_message(sent_msg, user.lang)
     except Exception as e:
+        log_sent_failure(user.user_id, user.lang, msg, repr(e))
         logger.warning(f'Failed to send message "{msg}" to user {user.user_id}')
         logger.exception(e)
-    set_user_sent_status(collection, user.user_id)
-    sleep(.05)
