@@ -3,10 +3,10 @@ FROM python:3.9-slim
 ENV TZ=Asia/Hebron
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-RUN pip install pipenv
+RUN pip install poetry
 WORKDIR /home/app
 COPY . .
 WORKDIR /home/app/broadcast
-RUN pipenv install
+RUN poetry update
 ENV PYTHONPATH=/home/app
-CMD ["pipenv", "run", "python", "main.py"]
+CMD ["poetry", "run", "python", "main.py"]
