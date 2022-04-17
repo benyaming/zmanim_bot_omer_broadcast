@@ -59,11 +59,16 @@ msg_friday_ru = 'Сегодня вечером будет {} день Омера
 msg_en = 'Today is the {} day of Omer, don\'t forget to perform the mitzvah!'
 msg_friday_en = 'Today\'s evening coming the {} day of Omer, don\'t forget to perform the mitzvah!'
 
+msg_he = 'היום  {} יום לעומר, אל תשכחו לקיים את המצווה!'
+msg_friday_he = 'הערב יום {} בעומר, אל תשכחו לקיים את המצווה!'
+
 MESSAGES = {
     'ru': msg_ru,
-    'en': msg_en
+    'en': msg_en,
+    'he': msg_he
 }
 MESSAGES_FRIDAY = {
     'ru': msg_friday_ru,
-    'en': msg_friday_en
+    'en': msg_friday_en,
+    'he': msg_friday_he
 }
