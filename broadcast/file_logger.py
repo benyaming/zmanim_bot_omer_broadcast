@@ -24,4 +24,4 @@ def log_sent_message(msg: Message, language: str):
 def log_sent_failure(user_id: int, language: str, text: str, error: str):
     path = logs_folder / f'{date.today()}.csv'
     with open(path, 'a') as f:
-        f.write(f'{dt.now},{user_id},,{language},{text},{error}\n')
+        f.write(f'{dt.now()},{user_id},,{language},{text},{error}\n')
