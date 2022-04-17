@@ -18,7 +18,7 @@ def init_logger():
 def log_sent_message(msg: Message, language: str):
     path = logs_folder / f'{date.today()}.csv'
     with open(path, 'a') as f:
-        f.write(f'{dt.now()},{msg.chat.id},{msg.message_id},{language},{msg.text},\n')
+        f.write(f'{dt.now()},{msg.chat.id},{msg.message_id},{language},\n')
 
 
 def log_sent_failure(user_id: int, language: str, text: str, error: str):
