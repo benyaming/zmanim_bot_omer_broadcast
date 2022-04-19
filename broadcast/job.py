@@ -70,7 +70,7 @@ def check_time():
 
         if dt.fromisoformat(user.dt) < now:
             try:
-                notificate_user(collection, user)
+                notificate_user(user)
             except Exception as e:
                 logger.exception(e)
             finally:

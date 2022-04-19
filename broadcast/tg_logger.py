@@ -54,7 +54,7 @@ class TgHandler(logging.Handler):
             logging.exception(e)
 
 
-logger = logging.getLogger('omer_broadcast')
-logger.setLevel(logging.INFO)
-logger.addHandler(TgHandler(logging.WARNING))
-logger.addHandler(logging.StreamHandler())
+# logger = logging.getLogger('omer_broadcast')
+# logger.setLevel(logging.INFO)
+# logger.addHandler(TgHandler(logging.WARNING))
+# logger.addHandler(logging.StreamHandler())

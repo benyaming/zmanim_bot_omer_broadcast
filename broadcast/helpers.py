@@ -105,7 +105,7 @@ def compose_msg(lang: str) -> str:
     return full_text
 
 
-def notificate_user(collection, user: UserData):
+def notificate_user(user: UserData):
     msg = compose_msg(user.lang)
 
     try:
