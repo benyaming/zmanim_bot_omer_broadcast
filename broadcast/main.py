@@ -9,7 +9,7 @@ from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
 from broadcast.file_logger import init_logger
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 
 def safe_set_time(should_reset: bool = True):
