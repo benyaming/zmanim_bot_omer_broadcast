@@ -32,7 +32,8 @@ def get_omer_time(user_data: UserData) -> Optional[str]:
     else:
         omer_time = calendar.tzais()
 
-    return omer_time.isoformat()
+    if isinstance(omer_time, dt):
+        return omer_time.isoformat()
 
 
 def set_time_for_today(should_reset: bool):
