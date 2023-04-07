@@ -21,8 +21,10 @@ def get_omer_time(user_data: UserData) -> Optional[str]:
     calendar = ZmanimCalendar(60, geo_location=location, date=date.today())
     jcalendar = JewishCalendar.from_date(date.today())
 
+    jcalendar.in_israel = tz_name in ('Asia/Tel_Aviv', 'Asia/Jerusalem', 'Asia/Hebron')
+
     omer_day = jcalendar.day_of_omer()
-    if not omer_day:
+    if not omer_day and (jcalendar.jewish_day, jcalendar.jewish_month) != (15, 1):
         return
 
     if jcalendar.is_assur_bemelacha() and jcalendar.is_tomorrow_assur_bemelacha():
