@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 from typing import List, Tuple, Optional
 from dataclasses import dataclass
@@ -8,8 +9,10 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from . import texsts
 from .misc import bot
-from .tg_logger import logger
 from .file_logger import log_sent_message, log_sent_failure
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass

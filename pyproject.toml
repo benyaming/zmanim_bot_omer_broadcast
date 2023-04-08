@@ -5,14 +5,14 @@ description = ""
 authors = ["Benyamin Ginzburg <benyomin.94@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 
-apscheduler = "*"
-pymongo = "*"
-python-telegram-bot = "*"
-pytz = "*"
-timezonefinder = "*"
-zmanim = "*"
+apscheduler = "==3.10.1"
+pymongo = "==4.3.3"
+python-telegram-bot = "==12.8"
+timezonefinder = "==6.2.0"
+zmanim = "==0.3.1"
+betterlogging = '==0.2.1'
 
 [tool.poetry.dev-dependencies]
 

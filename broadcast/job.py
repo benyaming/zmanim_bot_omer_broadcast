@@ -1,4 +1,5 @@
 import time
+import logging
 from typing import Optional
 from datetime import date, datetime as dt
 
@@ -10,9 +11,11 @@ from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from .config import MONGO_URL, DB_NAME, COLLECTION_NAME
-from .tg_logger import logger
 from .helpers import UserData, get_user_data, set_notification_time_for_user, notificate_user, \
     reset_sent_status, set_user_sent_status
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_omer_time(user_data: UserData) -> Optional[str]:

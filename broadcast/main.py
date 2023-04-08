@@ -1,15 +1,17 @@
-import logging
+import betterlogging as bl
+
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
-from broadcast.tg_logger import logger
 from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
 from broadcast.file_logger import init_logger
 
-logging.basicConfig(level=logging.INFO)
+
+bl.basic_colorized_config(level=bl.INFO)
+logger = bl.getLogger(__name__)
 
 
 def safe_set_time(should_reset: bool = True):
@@ -17,7 +19,7 @@ def safe_set_time(should_reset: bool = True):
     try:
         set_time_for_today(should_reset)
     except Exception as e:
-        logging.exception(e)
+        bl.exception(e)
 
 
 def safe_check():
