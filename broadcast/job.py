@@ -20,6 +20,11 @@ logger = logging.getLogger(__name__)
 
 def get_omer_time(user_data: UserData) -> Optional[str]:
     tz_name = TimezoneFinder().timezone_at(lat=user_data.latitude, lng=user_data.longitude)
+
+    # dateutil still not supports new 'Europe/Kyiv' timezone, thus...
+    if tz_name == 'Europe/Kyiv':
+        tz_name = 'Europe/Kiev'
+
     location = GeoLocation('', user_data.latitude, user_data.longitude, time_zone=tz_name)
     calendar = ZmanimCalendar(60, geo_location=location, date=date.today())
     jcalendar = JewishCalendar.from_date(date.today())
