@@ -48,10 +48,10 @@ def infinite_check():
 if __name__ == '__main__':
     safe_set_time(should_reset=False)
 
-    logger.info('Starting scheduler...')
-    scheduler.start()
-
     thread = threading.Thread(target=infinite_check)
     thread.start()
+
+    logger.info('Starting scheduler...')
+    scheduler.start()
 
 
