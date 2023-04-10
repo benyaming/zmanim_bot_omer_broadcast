@@ -4,6 +4,7 @@ from typing import List, Tuple, Optional
 from dataclasses import dataclass
 
 from telegram import Message
+from telegram.error import Unauthorized
 from pymongo.collection import Collection
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
@@ -114,6 +115,8 @@ def notificate_user(user: UserData):
     try:
         sent_msg: Message = bot.send_message(user.user_id, msg, parse_mode='HTML')
         log_sent_message(sent_msg, user.lang)
+    except Unauthorized as e:
+        logger.warning(f'User [{user.user_id}] skipped. Reason: {e}')
     except Exception as e:
         log_sent_failure(user.user_id, user.lang, msg, repr(e))
         logger.warning(f'Failed to send message "{msg}" to user {user.user_id}')
