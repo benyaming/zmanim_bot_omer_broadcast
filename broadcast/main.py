@@ -41,7 +41,7 @@ def infinite_check():
         except Exception as e:
             bl.exception(e)
 
-        logger.info(f'Check done for {time.time() - start}s')
+        logger.info(f'Check done for {int(time.time() - start)}s')
         time.sleep(JOB_PERIOD)
 
 
