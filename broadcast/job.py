@@ -1,3 +1,5 @@
+
+import functools
 import time
 import logging
 from typing import Optional
@@ -68,15 +70,21 @@ def set_time_for_today(should_reset: bool):
     client.close()
 
 
+@functools.cache
+def _get_tz(lat: float, lng: float):
+    tz_name = TimezoneFinder().timezone_at(lat=lat, lng=lng)
+    tz = timezone(tz_name)
+    return tz
+
+
 def check_time():
-    logger.info(f'Checking time...')
+    logger.debug(f'Checking time...')
     client = MongoClient(MONGO_URL)
     collection = client[DB_NAME][COLLECTION_NAME]
     user_data = get_user_data(collection)
 
     for user in user_data:
-        tz_name = TimezoneFinder().timezone_at(lat=user.latitude, lng=user.longitude)
-        tz = timezone(tz_name)
+        tz = _get_tz(user.latitude, user.longitude)
         now = dt.now(tz)
 
         if dt.fromisoformat(user.dt) < now:
