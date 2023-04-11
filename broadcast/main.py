@@ -28,7 +28,7 @@ daily_trigger = CronTrigger(day='*', hour=0, minute=1)
 scheduler.add_job(safe_set_time, trigger=daily_trigger)
 
 
-def infinite_check():
+def run_infinite_check():
     logger.info('Starting checker thread...')
 
     while True:
@@ -50,6 +50,6 @@ if __name__ == '__main__':
     logger.info('Starting scheduler...')
     scheduler.start()
 
-    infinite_check()
+    run_infinite_check()
 
 
