@@ -165,6 +165,14 @@ json = ["ujson"]
 socks = ["PySocks"]
 
 [[package]]
+name = "pytz"
+version = "2023.3"
+description = "World timezone definitions, modern and historical"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "setuptools"
 version = "67.6.1"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -227,7 +235,7 @@ python-dateutil = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.11"
-content-hash = "624f9ddf0c942341e6d37b9a2b7d6ffed1c2b7589bab1b7ecf854353e8d51b56"
+content-hash = "66b5a4ef794b13c44a26c86c5d2ff4de95c56590b2d17e70fb716ca62b317eeb"
 
 [metadata.files]
 betterlogging = [
@@ -496,6 +504,10 @@ python-dateutil = [
 python-telegram-bot = [
     {file = "python-telegram-bot-12.8.tar.gz", hash = "sha256:327186c56469216207dcdf8706892e58e0a62e51ef46f5143268e387bbb4edc3"},
     {file = "python_telegram_bot-12.8-py2.py3-none-any.whl", hash = "sha256:7eebed539ccacf77896cff9e41d1f68746b8ff3ca4da1e2e59285e9c749cb050"},
+]
+pytz = [
+    {file = "pytz-2023.3-py2.py3-none-any.whl", hash = "sha256:a151b3abb88eda1d4e34a9814df37de2a80e301e68ba0fd856fb9b46bfbbbffb"},
+    {file = "pytz-2023.3.tar.gz", hash = "sha256:1d8ce29db189191fb55338ee6d0387d82ab59f3d00eac103412d64e0ebd0c588"},
 ]
 setuptools = [
     {file = "setuptools-67.6.1-py3-none-any.whl", hash = "sha256:e728ca814a823bf7bf60162daf9db95b93d532948c4c0bea762ce62f60189078"},
