@@ -1,14 +1,15 @@
 import time
+from datetime import datetime
 
 import betterlogging as bl
-
-
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.triggers.cron import CronTrigger
 
 from broadcast.config import JOB_PERIOD
 from broadcast.job import set_time_for_today, check_time
 from broadcast.file_logger import init_logger
+
+
+RESET_HOUR = 0
+RESET_MINUTE = 1
 
 
 bl.basic_colorized_config(level=bl.INFO)
@@ -23,15 +24,17 @@ def safe_set_time(should_reset: bool = True):
         bl.exception(e)
 
 
-scheduler = BackgroundScheduler()
-daily_trigger = CronTrigger(day='*', hour=0, minute=1)
-scheduler.add_job(safe_set_time, trigger=daily_trigger)
-
-
 def run_infinite_check():
     logger.info('Starting checker thread...')
 
     while True:
+        now = datetime.now()
+
+        if now.hour == RESET_HOUR and now.minute == RESET_MINUTE:
+            logger.info('Initializing reset...')
+            safe_set_time()
+            time.sleep(60)
+
         logger.info('Begin check...')
         start = time.time()
 
@@ -47,8 +50,7 @@ def run_infinite_check():
 if __name__ == '__main__':
     safe_set_time(should_reset=False)
 
-    logger.info('Starting scheduler...')
-    scheduler.start()
+    logger.info('Starting worker...')
 
     run_infinite_check()
 
